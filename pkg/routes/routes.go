@@ -24,6 +24,7 @@ var UploadServiceRouter = func() *chi.Mux {
 
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", controller.HandlerReadiness)
+	v1Router.Post("/upload", controller.UploadHandler)
 	router.Mount("/v1", v1Router)
 	return router
 
