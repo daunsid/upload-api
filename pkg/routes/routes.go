@@ -22,12 +22,17 @@ var UploadServiceRouter = func() *chi.Mux {
 		MaxAge:           300,
 	}))
 
+	apiConfig := controller.NewUpload(controller.Connect())
 	v1Router := chi.NewRouter()
+
+	v1Router.Post("/user", apiConfig.HandlerCreateUser)
 	v1Router.Get("/healthz", controller.HandlerReadiness)
-	v1Router.Post("/upload", controller.UploadHandler)
+	v1Router.Post("/upload/{userID}", apiConfig.UploadHandler)
+	v1Router.Get("/files/{userID}", apiConfig.ListEntriesHandler)
+	v1Router.Get("/download/{fileID}", apiConfig.DownloadHandler)
+
 	router.Mount("/v1", v1Router)
 	return router
-
 }
 
 func StartServer() {

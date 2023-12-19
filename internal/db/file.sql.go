@@ -7,54 +7,60 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createFile = `-- name: CreateFile :one
 INSERT INTO files (
     user_id,
+    file_id,
     file_name
 ) VALUES (
-    $1, $2
+    $1, $2, $3
 )
-RETURNING id, user_id, file_name, created_at
+RETURNING id, user_id, file_name, file_id, created_at
 `
 
 type CreateFileParams struct {
-	UserID   string
+	UserID   uuid.UUID
+	FileID   string
 	FileName string
 }
 
 func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (File, error) {
-	row := q.db.QueryRowContext(ctx, createFile, arg.UserID, arg.FileName)
+	row := q.db.QueryRowContext(ctx, createFile, arg.UserID, arg.FileID, arg.FileName)
 	var i File
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.FileName,
+		&i.FileID,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getFile = `-- name: GetFile :one
-SELECT id, user_id, file_name, created_at FROM files
-WHERE id = $1 LIMIT 1
+SELECT id, user_id, file_name, file_id, created_at FROM files
+WHERE file_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetFile(ctx context.Context, id int64) (File, error) {
-	row := q.db.QueryRowContext(ctx, getFile, id)
+func (q *Queries) GetFile(ctx context.Context, fileID string) (File, error) {
+	row := q.db.QueryRowContext(ctx, getFile, fileID)
 	var i File
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.FileName,
+		&i.FileID,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const listEntries = `-- name: ListEntries :many
-SELECT id, user_id, file_name, created_at FROM files
+SELECT id, user_id, file_name, file_id, created_at FROM files
 WHERE user_id = $1
 ORDER BY id
 LIMIT $2
@@ -62,7 +68,7 @@ OFFSET $3
 `
 
 type ListEntriesParams struct {
-	UserID string
+	UserID uuid.UUID
 	Limit  int32
 	Offset int32
 }
@@ -80,6 +86,7 @@ func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParams) ([]Fil
 			&i.ID,
 			&i.UserID,
 			&i.FileName,
+			&i.FileID,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err

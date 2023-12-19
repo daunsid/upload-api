@@ -12,13 +12,15 @@ import (
 
 type File struct {
 	ID        int64
-	UserID    string
+	UserID    uuid.UUID
 	FileName  string
+	FileID    string
 	CreatedAt time.Time
 }
 
 type User struct {
-	ID        uuid.UUID
-	UserName  string
-	CreatedAt time.Time
+	ID           uuid.UUID
+	UserName     string
+	PasswordHash string
+	CreatedAt    time.Time
 }

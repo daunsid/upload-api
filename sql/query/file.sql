@@ -1,15 +1,16 @@
 -- name: CreateFile :one
 INSERT INTO files (
     user_id,
+    file_id,
     file_name
 ) VALUES (
-    $1, $2
+    $1, $2, $3
 )
 RETURNING *;
 
 -- name: GetFile :one
 SELECT * FROM files
-WHERE id = $1 LIMIT 1;
+WHERE file_id = $1 LIMIT 1;
 
 -- name: ListEntries :many
 SELECT * FROM files
