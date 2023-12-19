@@ -1,0 +1,29 @@
+version: '3'
+
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=modupe4816
+      - POSTGRES_DB=uploadb
+  # sqlc:
+  #   image: sqlc/sqlc
+  #   volumes:
+  #     - ./db:/db
+  #     - .:/src
+  #   working_dir: /src
+    #
+  app:
+    build:
+      context: .
+      #dockerfile: Dockerfile
+    ports:
+      - "8090:8080"
+    depends_on:
+      - postgres
+      #- sqlc
+    environment:
+      DB_URL: "postgres://postgres:modupe4816@postgres:5432/uploadb?sslmode=disable"
+      GOOGLE_DRIVE_CREDENTIALS: "/app/path/to/credentials.json"

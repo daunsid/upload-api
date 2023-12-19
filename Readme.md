@@ -39,10 +39,10 @@ Ensure the following environment variables are set for proper API functioning:
 
 ## Running the API
 
-- Build Docker Image:
-`docker build -t upload-api .`
+- Docker Compose:
+`docker-compose up`
 
 
-- Run Docker Container:
-`docker run -p 8080:8080 -e DATABASE_URL="your_database_url" -e GOOGLE_DRIVE_CREDENTIALS="path/to/credentials.json" upload-api`
+- Access the application:
+`http://localhost:8090`
 
